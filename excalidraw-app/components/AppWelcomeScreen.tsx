@@ -5,6 +5,7 @@ import { WelcomeScreen } from "@excalidraw/excalidraw/index";
 import React from "react";
 
 import { isExcalidrawPlusSignedUser } from "../app_constants";
+import { getConfig } from "../config";
 
 export const AppWelcomeScreen: React.FC<{
   onCollabDialogOpen: () => any;
@@ -21,9 +22,7 @@ export const AppWelcomeScreen: React.FC<{
           return (
             <a
               style={{ pointerEvents: POINTER_EVENTS.inheritFromUI }}
-              href={`${
-                import.meta.env.VITE_APP_PLUS_APP
-              }?utm_source=excalidraw&utm_medium=app&utm_content=welcomeScreenSignedInUser`}
+              href={`${getConfig("VITE_APP_PLUS_APP")}?utm_source=excalidraw&utm_medium=app&utm_content=welcomeScreenSignedInUser`}
               key={idx}
             >
               Excalidraw+
@@ -58,9 +57,7 @@ export const AppWelcomeScreen: React.FC<{
           )}
           {!isExcalidrawPlusSignedUser && (
             <WelcomeScreen.Center.MenuItemLink
-              href={`${
-                import.meta.env.VITE_APP_PLUS_LP
-              }/plus?utm_source=excalidraw&utm_medium=app&utm_content=welcomeScreenGuest`}
+              href={`${getConfig("VITE_APP_PLUS_LP")}/plus?utm_source=excalidraw&utm_medium=app&utm_content=welcomeScreenGuest`}
               shortcut={null}
               icon={loginIcon}
             >

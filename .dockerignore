@@ -4,6 +4,7 @@
 !.eslintrc.json
 !.npmrc
 !.prettierrc
+!docker-entrypoint.sh
 !excalidraw-app/
 !package.json
 !public/

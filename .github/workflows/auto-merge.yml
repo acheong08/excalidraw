@@ -1,0 +1,20 @@
+name: Auto-merge upstream sync PRs
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  automerge:
+    # Only run on PRs opened by the Action
+    if: github.actor == 'github-actions[bot]' && github.event.pull_request.head.ref == 'sync-upstream'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Enable auto-merge
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: rebase
+

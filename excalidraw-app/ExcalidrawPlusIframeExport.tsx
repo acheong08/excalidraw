@@ -169,7 +169,7 @@ export const ExcalidrawPlusIframeExport = () => {
           try {
             await verifyJWT({
               token: event.data.jwt,
-              publicKey: getConfig("VITE_APP_PLUS_EXPORT_PUBLIC_KEY") || "",
+              publicKey: getConfig("VITE_APP_PLUS_EXPORT_PUBLIC_KEY"),
             });
           } catch (error: any) {
             console.error(`Failed to verify JWT: ${error.message}`);

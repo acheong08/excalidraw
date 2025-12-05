@@ -6,35 +6,51 @@
  *
  * Priority:
  * 1. Runtime config from window.__EXCALIDRAW_CONFIG__ (set by config.js)
- * 2. Build-time config from import.meta.env.VITE_APP_*
+ * 2. Build-time config from import.meta.env.VITE_APP_* (from .env.production)
  *
  * For Docker deployments, the entrypoint script generates config.js from
  * environment variables, allowing configuration changes without rebuilding.
  */
 
+/**
+ * Runtime configuration object.
+ * Set by config.js which is generated at container startup in Docker deployments.
+ */
+interface ExcalidrawRuntimeConfig {
+  VITE_APP_BACKEND_V2_GET_URL?: string;
+  VITE_APP_BACKEND_V2_POST_URL?: string;
+  VITE_APP_LIBRARY_URL?: string;
+  VITE_APP_LIBRARY_BACKEND?: string;
+  VITE_APP_PLUS_LP?: string;
+  VITE_APP_PLUS_APP?: string;
+  VITE_APP_AI_BACKEND?: string;
+  VITE_APP_WS_SERVER_URL?: string;
+  VITE_APP_FIREBASE_CONFIG?: string;
+  VITE_APP_PLUS_EXPORT_PUBLIC_KEY?: string;
+  VITE_APP_PORTAL_URL?: string;
+  VITE_APP_DISABLE_SENTRY?: string;
+  VITE_APP_ENABLE_TRACKING?: string;
+}
+
+declare global {
+  interface Window {
+    __EXCALIDRAW_CONFIG__?: ExcalidrawRuntimeConfig;
+  }
+}
+
 // All configurable environment variables
-type ConfigKey =
-  | "VITE_APP_BACKEND_V2_GET_URL"
-  | "VITE_APP_BACKEND_V2_POST_URL"
-  | "VITE_APP_LIBRARY_URL"
-  | "VITE_APP_LIBRARY_BACKEND"
-  | "VITE_APP_PLUS_LP"
-  | "VITE_APP_PLUS_APP"
-  | "VITE_APP_AI_BACKEND"
-  | "VITE_APP_WS_SERVER_URL"
-  | "VITE_APP_FIREBASE_CONFIG"
-  | "VITE_APP_PLUS_EXPORT_PUBLIC_KEY"
-  | "VITE_APP_PORTAL_URL"
-  | "VITE_APP_DISABLE_SENTRY"
-  | "VITE_APP_ENABLE_TRACKING";
+type ConfigKey = keyof ExcalidrawRuntimeConfig;
 
 /**
  * Get a configuration value, preferring runtime config over build-time config.
+ * 
+ * Returns runtime config if set, otherwise falls back to build-time config
+ * from .env.production which is always present.
  *
- * @param key - The configuration key (without VITE_APP_ prefix in runtime config)
- * @returns The configuration value, or undefined if not set
+ * @param key - The configuration key
+ * @returns The configuration value (runtime or build-time)
  */
-export function getConfig(key: ConfigKey): string | undefined {
+export function getConfig(key: ConfigKey): string {
   // Check runtime config first (set by config.js in Docker)
   const runtimeConfig = window.__EXCALIDRAW_CONFIG__;
   if (runtimeConfig && key in runtimeConfig) {
@@ -44,22 +60,7 @@ export function getConfig(key: ConfigKey): string | undefined {
     }
   }
 
-  // Fall back to build-time config
-  return import.meta.env[key];
-}
-
-/**
- * Get a required configuration value.
- * Throws an error if the value is not set.
- *
- * @param key - The configuration key
- * @returns The configuration value
- * @throws Error if the configuration value is not set
- */
-export function getRequiredConfig(key: ConfigKey): string {
-  const value = getConfig(key);
-  if (value === undefined) {
-    throw new Error(`Missing required configuration: ${key}`);
-  }
-  return value;
+  // Fall back to build-time config from .env.production
+  // These values are always present at build time
+  return import.meta.env[key] as string;
 }

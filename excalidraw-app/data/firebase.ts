@@ -31,6 +31,7 @@ import type {
 } from "@excalidraw/excalidraw/types";
 
 import { FILE_CACHE_MAX_AGE_SEC } from "../app_constants";
+import { getConfig } from "../config";
 
 import { getSyncableElements } from ".";
 
@@ -43,12 +44,11 @@ import type { Socket } from "socket.io-client";
 
 let FIREBASE_CONFIG: Record<string, any>;
 try {
-  FIREBASE_CONFIG = JSON.parse(import.meta.env.VITE_APP_FIREBASE_CONFIG);
+  const firebaseConfigStr = getConfig("VITE_APP_FIREBASE_CONFIG");
+  FIREBASE_CONFIG = firebaseConfigStr ? JSON.parse(firebaseConfigStr) : {};
 } catch (error: any) {
   console.warn(
-    `Error JSON parsing firebase config. Supplied value: ${
-      import.meta.env.VITE_APP_FIREBASE_CONFIG
-    }`,
+    `Error JSON parsing firebase config. Supplied value: ${getConfig("VITE_APP_FIREBASE_CONFIG")}`,
   );
   FIREBASE_CONFIG = {};
 }

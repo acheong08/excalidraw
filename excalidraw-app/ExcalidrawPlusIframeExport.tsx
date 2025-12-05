@@ -9,11 +9,12 @@ import type {
 import type { AppState, BinaryFileData } from "@excalidraw/excalidraw/types";
 
 import { STORAGE_KEYS } from "./app_constants";
+import { getConfig } from "./config";
 import { LocalData } from "./data/LocalData";
 
 const EVENT_REQUEST_SCENE = "REQUEST_SCENE";
 
-const EXCALIDRAW_PLUS_ORIGIN = import.meta.env.VITE_APP_PLUS_APP;
+const EXCALIDRAW_PLUS_ORIGIN = getConfig("VITE_APP_PLUS_APP");
 
 // -----------------------------------------------------------------------------
 // outgoing message
@@ -168,7 +169,7 @@ export const ExcalidrawPlusIframeExport = () => {
           try {
             await verifyJWT({
               token: event.data.jwt,
-              publicKey: import.meta.env.VITE_APP_PLUS_EXPORT_PUBLIC_KEY,
+              publicKey: getConfig("VITE_APP_PLUS_EXPORT_PUBLIC_KEY") || "",
             });
           } catch (error: any) {
             console.error(`Failed to verify JWT: ${error.message}`);

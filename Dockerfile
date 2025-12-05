@@ -16,5 +16,11 @@ RUN npm_config_target_arch=${TARGETARCH} yarn build:app:docker
 FROM --platform=${TARGETPLATFORM} nginx:1.27-alpine
 
 COPY --from=build /opt/node_app/excalidraw-app/build /usr/share/nginx/html
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+
+RUN chmod +x /docker-entrypoint.sh
 
 HEALTHCHECK CMD wget -q -O /dev/null http://localhost || exit 1
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]

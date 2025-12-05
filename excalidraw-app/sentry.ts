@@ -2,13 +2,15 @@ import { getFeatureFlag } from "@excalidraw/common";
 import * as Sentry from "@sentry/browser";
 import callsites from "callsites";
 
+import { getConfig } from "./config";
+
 const SentryEnvHostnameMap: { [key: string]: string } = {
   "excalidraw.com": "production",
   "staging.excalidraw.com": "staging",
   "vercel.app": "staging",
 };
 
-const SENTRY_DISABLED = import.meta.env.VITE_APP_DISABLE_SENTRY === "true";
+const SENTRY_DISABLED = getConfig("VITE_APP_DISABLE_SENTRY") === "true";
 
 // Disable Sentry locally or inside the Docker to avoid noise/respect privacy
 const onlineEnv =

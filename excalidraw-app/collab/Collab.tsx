@@ -60,6 +60,7 @@ import {
   SYNC_FULL_SCENE_INTERVAL_MS,
   WS_EVENTS,
 } from "../app_constants";
+import { getConfig } from "../config";
 import {
   generateCollaborationLinkData,
   getCollaborationLink,
@@ -515,8 +516,12 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     this.fallbackInitializationHandler = fallbackInitializationHandler;
 
     try {
+      const wsServerUrl = getConfig("VITE_APP_WS_SERVER_URL");
+      if (!wsServerUrl) {
+        throw new Error("WebSocket server URL not configured");
+      }
       this.portal.socket = this.portal.open(
-        socketIOClient(import.meta.env.VITE_APP_WS_SERVER_URL, {
+        socketIOClient(wsServerUrl, {
           transports: ["websocket", "polling"],
         }),
         roomId,
